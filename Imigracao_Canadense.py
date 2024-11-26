@@ -68,7 +68,7 @@ with aba3:
                 filtered_region,x='Region',y='Total',
                 width=600, height=600)
         fig_region.update_traces(
-                text=filtered_data['Total'],
+                text=filtered_region['Total'],
                 textposition='outside',textfont=dict(size=16))
         fig_region.update_layout(
         xaxis=dict(
