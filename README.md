@@ -1,4 +1,4 @@
-# dashboard_canada
+# Dashboard Imigração Canadense
 
 Dashboard criado utilizando a biblioteca streamlit e a plotly para vizualização de dados referetens a imigração canadense
 
