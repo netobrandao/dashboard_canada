@@ -5,7 +5,7 @@ import plotly.express as px
 # Carregar os dados
 data = pd.read_csv('https://raw.githubusercontent.com/netobrandao/ImmigrationCanada/refs/heads/main/canadian_immegration_data.csv')
 
-#tabelas para construção dos graficos
+#tabelas para consulta
 #Paises
 datacountry = data.drop(columns=(['Continent','Region','DevName','Total']))
 datacountry = datacountry.T
@@ -34,7 +34,7 @@ datadevname.reset_index(inplace=True)
 datadevname = datadevname.rename(columns={'index': 'Ano'})
 datadevname = datadevname.astype(int)
 
-# Configuração inicial do Streamlit
+
 st.title("Séries Temporais da Imigração Canadense :flag-ca: ")
 st.subheader('Visualize os dados da imigração canadense entre os anos de 1980 a 2013')
 
@@ -42,14 +42,14 @@ aba1,aba2,aba3,aba4 = st.tabs(["Paises", "Continentes","Regiões","Categoria"])
 
 with aba1:
     st.header("Série Temporal por País")
-    # Filtro: Seleção de países
+    #Filtro: Seleção de países
     paises = st.multiselect(
         "Selecione os Países:",
-        options=datacountry.columns[1:],  # Ignora a coluna 'Ano'
-        default=datacountry.columns[25]    # Seleciona o primeiro país como padrão
+        options=datacountry.columns[1:],  #Ignora a coluna 'Ano'
+        default=datacountry.columns[25]    #Seleciona o 'Brazil' como padrão
     )
 
-    # Filtro: Intervalo de anos
+    #Filtro: Intervalo de anos
     anos = st.slider(
         "Selecione o intervalo de anos:",
         min_value=int(datacountry['Ano'].min()),
@@ -57,10 +57,9 @@ with aba1:
         value=(int(datacountry['Ano'].min()), int(datacountry['Ano'].max())),key='slider_pais'
     )
 
-    # Filtrar os dados com base nos filtros
     datacountry_filtrada = datacountry[(datacountry['Ano'] >= anos[0]) & (datacountry['Ano'] <= anos[1])]
 
-    # Criar o gráfico com Plotly
+    #Construção do grafico
     if paises:
         data_long = datacountry_filtrada.melt(id_vars=['Ano'], value_vars=paises, 
                                             var_name='País', value_name='Valor')
@@ -72,6 +71,7 @@ with aba1:
             title="Série Temporal por País",
             labels={"Valor": "Valor", "Ano": "Ano", "País": "País"}
         )
+        #Parametros do Grafico
         fig_country.update_layout(
         xaxis=dict(
         title="Ano",
@@ -85,11 +85,14 @@ with aba1:
 
 with aba2:
     st.header("Série Temporal por Continente")
+     #Filtro: Seleção de continentes
     continentes = st.multiselect(
         "Selecione os Continentes:",
-        options=datacontinent.columns[1:],  # Ignora colunas 'Índice' e 'Ano'
+        options=datacontinent.columns[1:],  #Ignora colunas 'Índice' e 'Ano'
         default=datacontinent.columns[2]
     )
+    
+    #Filtro: Intervalo de anos
     anos_continente = st.slider(
         "Selecione o intervalo de anos:",
         min_value=int(datacontinent['Ano'].min()),
@@ -101,10 +104,12 @@ with aba2:
         (datacontinent['Ano'] <= anos_continente[1])
     ]
     if continentes:
+        #Tratamento dos dados
         data_long_continent = datacontinent_filtrada.melt(
             id_vars=['Ano'], value_vars=continentes, 
             var_name='Continente', value_name='Valor'
         )
+        #Construção do grafico
         fig_continent = px.line(
             data_long_continent,
             x="Ano",
@@ -113,6 +118,7 @@ with aba2:
             title="Série Temporal por Continente",
             labels={"Valor": "Valor", "Ano": "Ano", "Continente": "Continente"}
         )
+        #Parametros do Grafico
         fig_continent.update_layout(
         xaxis=dict(
         title="Ano",
@@ -124,13 +130,14 @@ with aba2:
         st.warning("Selecione pelo menos um continente para visualizar o gráfico.")
 
 with aba3:
-
     st.header("Série Temporal por Região")
+    #Filtro: Seleção das regiões
     regioes = st.multiselect(
         "Selecione as Regiões:",
         options=dataregion.columns[1:],  # Ignora colunas 'Índice' e 'Ano'
         default=dataregion.columns[5]
     )
+    #Filtro: Intervalo de anos
     anos_regiao = st.slider(
         "Selecione o intervalo de anos:",
         min_value=int(dataregion['Ano'].min()),
@@ -142,10 +149,12 @@ with aba3:
         (dataregion['Ano'] <= anos_regiao[1])
     ]
     if regioes:
+        #Tratamento dos dados
         data_long_region = dataregion_filtrada.melt(
             id_vars=['Ano'], value_vars=regioes, 
             var_name='Regiao', value_name='Quantidade'
         )
+        #Construção do grafico
         fig_region = px.line(
             data_long_region,
             x="Ano",
@@ -154,7 +163,7 @@ with aba3:
             title="Série Temporal por Região",
             labels={"Quantidade": "Quantidade", "Ano": "Ano", "Regiao": "Regiao"}
         )
-
+        #Parametros do Grafico
         fig_region.update_layout(
         xaxis=dict(
         title="Ano",
@@ -167,11 +176,13 @@ with aba3:
 
 with aba4:
     st.header("Série Temporal por DevName")
+    #Filtro: Seleção das categorias
     devname = st.multiselect(
         "Selecione as Categorias:",
         options=datadevname.columns[1:],
         default=datadevname.columns[2]
     )
+    #Filtro: Intervalo de anos
     anos_devname = st.slider(
         "Selecione o intervalo de anos:",
         min_value=int(datadevname['Ano'].min()),
@@ -183,10 +194,12 @@ with aba4:
         (datadevname['Ano'] <= anos_devname[1])
     ]
     if devname:
+        #Tratamento dos dados
         data_long_devname = datadevname_filtrada.melt(
             id_vars=['Ano'], value_vars=devname, 
             var_name='Regiao', value_name='Quantidade'
         )
+        #construção do grafico
         fig_devname = px.line(
             data_long_devname,
             x="Ano",
@@ -194,6 +207,7 @@ with aba4:
             color="Regiao",
             title="Série Temporal por DevName",
             labels={"Quantidade": "Quantidade", "Ano": "Ano", "Regiao": "Regiao"})
+        #parametros do grafico
         fig_devname.update_layout(
         xaxis=dict(
         title="Ano",
@@ -203,6 +217,6 @@ with aba4:
         st.plotly_chart(fig_devname)
     else:
         st.warning("Selecione pelo menos uma categoria para visualizar o gráfico.")
-
+#fonte dos dados
 st.markdown("[Fonte dos Dados](https://www.kaggle.com/datasets/ammaraahmad/immigration-to-canada)")
         
